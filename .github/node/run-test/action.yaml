@@ -1,0 +1,15 @@
+name: run test
+description: run service test
+inputs:
+  service-directory:
+    description: the service directory
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - id: run-test
+      shell: bash
+      working-directory: ${{ inputs.service-directory }}
+      run: |
+        npm ci --include=dev
+        npm test

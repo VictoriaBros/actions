@@ -1,0 +1,22 @@
+name: setup ssh
+description: Setup SSH key and configure for git
+inputs:
+  key:
+    description: a private ssh key that has access to the required repos
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      name: setup SSH for Git
+      run: |
+        mkdir -p ~/.ssh
+        # add the host keys to known_hosts file
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+        # put down the ssh key
+        echo "${{ inputs.key }}" > ~/.ssh/id_rsa
+        chmod 400 ~/.ssh/id_rsa
+        # set git to use ssh instead of https
+        git config --global \
+          url."git@github.com:".insteadOf \
+          "https://github.com/"

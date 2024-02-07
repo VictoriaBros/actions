@@ -24,6 +24,5 @@ runs:
         DEV_IMAGE: ${{ inputs.dev-image-name }}
         PROD_IMAGE: ${{ inputs.prod-image-name }}
       run: |
-        SERVICE_VERSION=$(awk -F'"' '/"version": ".+"/{ print $4; exit; }' package.json)
         docker tag ${DEV_IMAGE} ${PROD_IMAGE}
         docker push ${PROD_IMAGE}

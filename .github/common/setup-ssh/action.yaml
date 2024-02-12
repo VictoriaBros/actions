@@ -1,22 +1,48 @@
 name: setup ssh
-description: Setup SSH key and configure for git
+description: Setup SSH with remote server
 inputs:
   key:
-    description: a private ssh key that has access to the required repos
+    description: private ssh key
     required: true
+  username:
+    description: connect as user
+    required: true
+  host:
+    description: connect to host
+    required: true
+  port:
+    description: connect to port
+    required: false
+    default: 22
 runs:
   using: "composite"
   steps:
-    - shell: bash
-      name: setup SSH for Git
+    - id: setup-ssh
+      shell: bash
+      env:
+        SSH_KEY: ${{ inputs.key }}
+        SSH_USERNAME: ${{ inputs.username }}
+        SSH_HOST: ${{ inputs.host }}
+        SSH_PORT: ${{ inputs.port }}
       run: |
         mkdir -p ~/.ssh
         # add the host keys to known_hosts file
-        ssh-keyscan github.com >> ~/.ssh/known_hosts
+        ssh-keyscan -H ${SSH_HOST} >> ~/.ssh/known_hosts
         # put down the ssh key
-        echo "${{ inputs.key }}" > ~/.ssh/id_rsa
+        echo "${SSH_KEY}" > ~/.ssh/id_rsa
         chmod 400 ~/.ssh/id_rsa
-        # set git to use ssh instead of https
-        git config --global \
-          url."git@github.com:".insteadOf \
-          "https://github.com/"
+    - id: ssh
+      shell: bash
+      env:
+        SSH_USERNAME: ${{ inputs.username }}
+        SSH_HOST: ${{ inputs.host }}
+        SSH_PORT: ${{ inputs.port }}
+      run: |
+        # server ssh
+        ssh -T -p ${SSH_PORT} ${SSH_USERNAME}@${SSH_HOST} <<'EOL'
+          now="$(date)"
+          up="$(uptime)"
+          echo "TIME: $now"
+          echo "UPTIME: $up"
+          echo "Bye"
+        EOL

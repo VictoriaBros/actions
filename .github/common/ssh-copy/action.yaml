@@ -1,0 +1,28 @@
+name: ssh copy
+description: SSH copy local directory to remote server
+inputs:
+  directory:
+    description: the directory to copy
+    required: true
+  username:
+    description: connect as user
+    required: true
+  host:
+    description: connect to host
+    required: true
+  port:
+    description: connect to port
+    required: false
+    default: 22
+runs:
+  using: "composite"
+  steps:
+    - id: ssh-copy
+      shell: bash
+      env:
+        DIRECTORY: ${{ inputs.directory }}
+        SSH_USERNAME: ${{ inputs.username }}
+        SSH_HOST: ${{ inputs.host }}
+        SSH_PORT: ${{ inputs.port }}
+      run: |
+        scp -P ${SSH_PORT} -r ~/${DIRECTORY} ${SSH_USERNAME}@${SSH_HOST}:${DIRECTORY}

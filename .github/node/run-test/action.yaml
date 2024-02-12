@@ -5,7 +5,7 @@ inputs:
     description: the service directory
     required: true
 runs:
-  using: "composite"
+  using: composite
   steps:
     - id: run-test
       shell: bash

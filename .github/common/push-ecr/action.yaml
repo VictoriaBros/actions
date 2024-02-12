@@ -16,7 +16,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - id: push_ecr
+    - id: push-ecr
       shell: bash
       env:
         ECR_REGISTRY: ${{ inputs.ecr-registry }}

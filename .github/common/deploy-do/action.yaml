@@ -1,0 +1,71 @@
+name: deploy digitalocean
+description: Deploy docker image to digital ocean
+inputs:
+  service-name:
+    description: the service name
+    required: true
+  service-port:
+    description: the service port
+    required: true
+  ecr-registry:
+    description: Amazon ECR registry
+    required: true
+  ecr-repository:
+    description: Amazon ECR repository
+    required: true
+  prod-image-name:
+    description: Amazon ECR build image name
+    required: true
+  dot-env-key:
+    description: dotenv.org env key
+    required: false
+  username:
+    description: connect as user
+    required: true
+  host:
+    description: connect to host
+    required: true
+  port:
+    description: connect to port
+    required: false
+    default: 22
+runs:
+  using: composite
+  steps:
+    - id: deploy-do
+      shell: bash
+      env:
+        SERVICE_NAME: ${{ inputs.service-name }}
+        SERVICE_PORT: ${{ inputs.service-port }}
+        ECR_REGISTRY: ${{ inputs.ecr-registry }}
+        ECR_REPOSITORY: ${{ inputs.ecr-repository }}
+        PROD_IMAGE: ${{ inputs.prod-image-name }}
+        DOTENV_KEY: ${{ inputs.dot-env-key }}
+        SSH_USERNAME: ${{ inputs.username }}
+        SSH_HOST: ${{ inputs.host }}
+        SSH_PORT: ${{ inputs.port }}
+      run: |
+        ssh -T -p ${SSH_PORT} ${SSH_USERNAME}@${SSH_HOST} <<'EOL'
+          _awscli_bin="$(which aws)"
+
+          if [ -f "${_awscli_bin}" ]; then
+            echo "awscli is installed"
+          else
+            echo "awscli is not installed"
+            apt install -y python3-pip
+            pip install awscli
+          fi
+
+          echo $(aws --version)
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ env.ECR_REGISTRY }}
+
+          docker stop ${{ env.SERVICE_NAME }}
+          docker rm ${{ env.SERVICE_NAME }}
+          docker run -d \
+            -p ${{ env.SERVICE_PORT }}:${{ env.SERVICE_PORT }} \
+            --name ${{ env.SERVICE_NAME }} \
+            --restart on-failure:3 \
+            --env DOTENV_KEY=${{ env.DOTENV_KEY }} \
+            --env-file ${{ env.SERVICE_NAME }}/env \
+            -d ${{ env.PROD_IMAGE }}
+        EOL

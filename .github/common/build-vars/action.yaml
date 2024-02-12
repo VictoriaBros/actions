@@ -23,7 +23,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - id: build-image
+    - id: build-vars
       shell: bash
       env:
         ECR_REGISTRY: ${{ inputs.ecr-registry }}

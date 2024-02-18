@@ -41,6 +41,11 @@ runs:
         DEV_IMAGE=${ORG_NAME}/${SERVICE_NAME}:latest
         PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
 
+        if [ "$REF" == "refs/heads/dev" ]; then
+          IMAGE_TAG=${SERVICE_VERSION}-beta
+          PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
+        fi
+
         if [ "$REF" == "refs/heads/release" ]; then
           IMAGE_TAG=${SERVICE_VERSION}-rc
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}

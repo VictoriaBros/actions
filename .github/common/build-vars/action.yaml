@@ -13,13 +13,13 @@ inputs:
 outputs:
   prod-image-name:
     description: Amazon ECR build image name
-    value: ${{ steps.build-image.outputs.prod-image-name }}
+    value: ${{ steps.build-vars.outputs.prod-image-name }}
   dev-image-name:
     description: Generic build image name
-    value: ${{ steps.build-image.outputs.dev-image-name }}
+    value: ${{ steps.build-vars.outputs.dev-image-name }}
   ecr-repository:
     description: Amazon ECR repository
-    value: ${{ steps.build-image.outputs.ecr-repository }}
+    value: ${{ steps.build-vars.outputs.ecr-repository }}
 runs:
   using: composite
   steps:

@@ -25,4 +25,4 @@ runs:
         SSH_HOST: ${{ inputs.host }}
         SSH_PORT: ${{ inputs.port }}
       run: |
-        scp -P ${SSH_PORT} -r ~/${DIRECTORY} ${SSH_USERNAME}@${SSH_HOST}:${DIRECTORY}
+        rsync -rzP --delete --port=${SSH_PORT} ~/${DIRECTORY} ${SSH_USERNAME}@${SSH_HOST}:${DIRECTORY}

@@ -4,6 +4,10 @@ inputs:
   directory:
     description: the directory to copy
     required: true
+  target-directory:
+    description: the directory to paste
+    required: false
+    default: "."
   username:
     description: connect as user
     required: true
@@ -20,9 +24,10 @@ runs:
     - id: ssh-copy
       shell: bash
       env:
-        DIRECTORY: ${{ inputs.directory }}
+        SOURCE_DIRECTORY: ${{ inputs.directory }}
+        TARGET_DIRECTORY: ${{ inputs.target-directory }}
         SSH_USERNAME: ${{ inputs.username }}
         SSH_HOST: ${{ inputs.host }}
         SSH_PORT: ${{ inputs.port }}
       run: |
-        rsync -rzP --delete --port=${SSH_PORT} ~/${DIRECTORY} ${SSH_USERNAME}@${SSH_HOST}:${DIRECTORY}
+        rsync -rzP --delete --port=${SSH_PORT} ~/${SOURCE_DIRECTORY} ${SSH_USERNAME}@${SSH_HOST}:${TARGET_DIRECTORY}

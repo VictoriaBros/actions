@@ -61,6 +61,7 @@ runs:
 
           docker stop ${{ env.SERVICE_NAME }}
           docker rm ${{ env.SERVICE_NAME }}
+          docker rmi $(docker images -q ${{ env.PROD_IMAGE }})
           docker run -d \
             -p ${{ env.SERVICE_PORT }}:${{ env.SERVICE_PORT }} \
             --name ${{ env.SERVICE_NAME }} \

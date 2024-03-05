@@ -7,6 +7,10 @@ inputs:
   service-port:
     description: the service port
     required: true
+  service-network:
+    description: the service network
+    required: false
+    default: bridge
   ecr-registry:
     description: Amazon ECR registry
     required: true
@@ -37,6 +41,7 @@ runs:
       env:
         SERVICE_NAME: ${{ inputs.service-name }}
         SERVICE_PORT: ${{ inputs.service-port }}
+        SERVICE_NETWORK: ${{ inputs.service-network }}
         ECR_REGISTRY: ${{ inputs.ecr-registry }}
         ECR_REPOSITORY: ${{ inputs.ecr-repository }}
         PROD_IMAGE: ${{ inputs.prod-image-name }}
@@ -65,6 +70,7 @@ runs:
           docker run -d \
             -p ${{ env.SERVICE_PORT }}:${{ env.SERVICE_PORT }} \
             --name ${{ env.SERVICE_NAME }} \
+            --net ${{ env.SERVICE_NETWORK }} \
             --restart on-failure:3 \
             --env DOTENV_KEY=${{ env.DOTENV_KEY }} \
             --env-file ${{ env.SERVICE_NAME }}/env \

@@ -42,7 +42,7 @@ runs:
         PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
 
         if [ "$REF" == "refs/heads/dev" ]; then
-          BETA_ID=$(date +'%d')
+          BETA_ID=$(date +'%d%m%Y')
           IMAGE_TAG=${SERVICE_VERSION}-beta.${BETA_ID}
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
         fi

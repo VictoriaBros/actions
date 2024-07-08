@@ -1,0 +1,27 @@
+name: Setup IAM
+description: Set up IAM identity mapping for EKS
+inputs:
+  cluster:
+    description: EKS cluster name
+    required: true
+  region:
+    description: AWS region
+    required: true
+  arn:
+    description: IAM ARN
+    required: true
+  username:
+    description: Username for the IAM identity
+    required: true
+runs:
+  using: composite
+  steps:
+    - run: |
+        aws sts get-caller-identity
+        eksctl create iamidentitymapping \
+          --cluster ${{ inputs.cluster }} \
+          --region ${{ inputs.region }} \
+          --arn ${{ inputs.arn }} \
+          --group system:masters \
+          --no-duplicate-arns \
+          --username ${{ inputs.username }}

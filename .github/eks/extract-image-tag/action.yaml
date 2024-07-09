@@ -1,0 +1,16 @@
+name: extract image tag
+description: Extract and edit image tag into helm values file
+inputs:
+  values_file_path:
+    description: Path of the helm values file
+    required: true
+  image_tag:
+    description: Tag of the built image
+    required: true
+runs:
+  using: composite
+  steps:
+    - run: |        
+        image_tag="${{ inputs.image_tag##*: }}"
+        echo $image_tag
+        sed -i "s|image-tag|${{ inputs.image_tag }}|g" "${{ inputs.values_file_path }}" 

@@ -1,0 +1,14 @@
+name: update kubeconfig
+description: Update kubeconfig file to include new user ARN
+inputs:
+  cluster:
+    description: EKS cluster name
+    required: true
+  region:
+    description: AWS region
+    required: true
+runs:
+  using: composite
+  steps:
+    - run: |
+        aws eks update-kubeconfig --name ${{ inputs.cluster }} --region ${{ inputs.region }}

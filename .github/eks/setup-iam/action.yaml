@@ -25,3 +25,4 @@ runs:
           --group system:masters \
           --no-duplicate-arns \
           --username ${{ inputs.username }}
+      shell: bash

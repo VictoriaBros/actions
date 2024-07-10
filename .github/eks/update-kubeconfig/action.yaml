@@ -12,3 +12,4 @@ runs:
   steps:
     - run: |
         aws eks update-kubeconfig --name ${{ inputs.cluster }} --region ${{ inputs.region }}
+      shell: bash

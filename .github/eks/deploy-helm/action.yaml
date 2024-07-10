@@ -25,10 +25,11 @@ inputs:
 runs:
   using: composite
   steps:
-    - run: |
-        helm repo add ${{ inputs.org-name }} ${{ inputs.repo-url }}
-        helm repo update
-        helm upgrade --install ${{ inputs.release-name }} ${{ inputs.chart-name }} \
-            --set service.targetPort=${{ inputs.target-port }} \
-            --values ${{ inputs.values-file-path }} \
-            --atomic --namespace ${{ inputs.namespace }}
+    -   run: |
+            helm repo add ${{ inputs.org-name }} ${{ inputs.repo-url }}
+            helm repo update
+            helm upgrade --install ${{ inputs.release-name }} ${{ inputs.chart-name }} \
+                --set service.targetPort=${{ inputs.target-port }} \
+                --values ${{ inputs.values-file-path }} \
+                --atomic --namespace ${{ inputs.namespace }}
+        shell: bash

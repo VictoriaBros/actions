@@ -1,5 +1,5 @@
 name: update aws cli
-description: update aws cli
+description: update AWS CLI
 runs:
   using: composite
   steps:

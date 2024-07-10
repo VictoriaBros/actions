@@ -1,4 +1,4 @@
-name: deploy helm chart
+name: deploy helm
 description: deploy the helm chart
 inputs:
     release-name:
@@ -9,6 +9,9 @@ inputs:
         required: true
     chart-name:
         description: the helm chart's name
+        required: true
+    org-name:
+        description: the organisation name
         required: true
     repo-url:
         description: the helm chart's URL
@@ -23,9 +26,9 @@ runs:
   using: composite
   steps:
     - run: |
-        helm repo add victoriabros ${{ inputs.repo-url }}
+        helm repo add ${{ inputs.org-name }} ${{ inputs.repo-url }}
         helm repo update
         helm upgrade --install ${{ inputs.release-name }} ${{ inputs.chart-name }} \
-        --set service.targetPort=${{ inputs.target-port }} \
-        --values ${{ inputs.values-file-path }} \
-        --atomic --namespace ${{ inputs.namespace }} 
+            --set service.targetPort=${{ inputs.target-port }} \
+            --values ${{ inputs.values-file-path }} \
+            --atomic --namespace ${{ inputs.namespace }}

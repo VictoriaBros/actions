@@ -1,0 +1,34 @@
+name: deploy helm
+description: deploy the helm chart
+inputs:
+    release-name:
+        description: name of the release
+        required: true
+    namespace:
+        description: deployment's namespace 
+        required: true
+    chart-name:
+        description: the helm chart's name
+        required: true
+    org-name:
+        description: the organisation name
+        required: true
+    repo-url:
+        description: the helm chart's URL
+        required: true
+    target-port:
+        description: port where the service runs on
+        required: true
+    values-file-path:
+        description: path of the helm chart values file
+        required: true
+runs:
+  using: composite
+  steps:
+    - run: |
+        helm repo add ${{ inputs.org-name }} ${{ inputs.repo-url }}
+        helm repo update
+        helm upgrade --install ${{ inputs.release-name }} ${{ inputs.chart-name }} \
+            --set service.targetPort=${{ inputs.target-port }} \
+            --values ${{ inputs.values-file-path }} \
+            --atomic --namespace ${{ inputs.namespace }}

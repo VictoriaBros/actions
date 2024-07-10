@@ -10,7 +10,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - run: |        
+    - run: |
         image_tag="${{ inputs.image_tag##*: }}"
         echo $image_tag
         sed -i "s|image-tag|${{ inputs.image_tag }}|g" "${{ inputs.values_file_path }}" 

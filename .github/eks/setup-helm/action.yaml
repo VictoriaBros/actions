@@ -1,5 +1,5 @@
 name: setup helm
-description: Install and setup Helm
+description: install and setup Helm
 runs:
   using: composite
   steps:

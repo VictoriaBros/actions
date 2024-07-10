@@ -1,5 +1,5 @@
 name: update kubeconfig
-description: Update kubeconfig file to include new user ARN
+description: update kubeconfig file to include new user ARN
 inputs:
   cluster:
     description: EKS cluster name

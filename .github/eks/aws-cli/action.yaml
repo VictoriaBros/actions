@@ -1,5 +1,5 @@
 name: setup aws cli
-description: this step updates and configures the aws cli
+description: update and configure the aws cli
 runs:
   using: composite
   steps:

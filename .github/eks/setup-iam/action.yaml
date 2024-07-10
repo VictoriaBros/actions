@@ -1,5 +1,5 @@
 name: Setup IAM
-description: Set up IAM identity mapping for EKS
+description: set up IAM identity mapping for EKS
 inputs:
   cluster:
     description: EKS cluster name

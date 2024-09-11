@@ -32,17 +32,21 @@ runs:
         ALPHA_ID: ${{ github.run_number }}
         REF: ${{ github.ref }}
       run: |
+        # Extract version from package.json (semver format: MAJOR.MINOR.PATCH)
         SOURCE_VERSION=$(awk -F'"' '/"version": ".+"/{ print $4; exit; }' package.json)
         SERVICE_VERSION=v${SOURCE_VERSION}
 
         ECR_REPOSITORY=${ORG_NAME}/${SERVICE_NAME}
-        IMAGE_TAG=${SERVICE_VERSION}-alpha.${ALPHA_ID}
         IMAGE_NAME=${ECR_REGISTRY}/${ECR_REPOSITORY}
         DEV_IMAGE=${ORG_NAME}/${SERVICE_NAME}:latest
+
+        # Default to semantic version (MAJOR.MINOR.PATCH)
+        IMAGE_TAG=${SERVICE_VERSION}-alpha.${ALPHA_ID}
         PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
 
+        # Tagging logic based on branch with semver compliance
         if [ "$REF" == "refs/heads/dev" ]; then
-          BETA_ID=$(date +'%d%m%Y')
+          BETA_ID=$(date +'%Y%m%d')
           IMAGE_TAG=${SERVICE_VERSION}-beta.${BETA_ID}
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
         fi
@@ -53,10 +57,11 @@ runs:
         fi
 
         if [ "$REF" == "refs/heads/main" ]; then
-          IMAGE_TAG=${SERVICE_VERSION}
+          IMAGE_TAG=${SERVICE_VERSION}  # Pure semver without any suffix
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
         fi
 
+        # Output the final values
         echo "prod-image-name=${PROD_IMAGE}" >> "$GITHUB_OUTPUT"
         echo "dev-image-name=${DEV_IMAGE}" >> "$GITHUB_OUTPUT"
         echo "ecr-repository=${ECR_REPOSITORY}" >> "$GITHUB_OUTPUT"

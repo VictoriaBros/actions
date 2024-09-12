@@ -31,6 +31,7 @@ runs:
         SERVICE_NAME: ${{ inputs.service-name }}
         ALPHA_ID: ${{ github.run_number }}
         REF: ${{ github.ref }}
+        GIT_SHORT_SHA: ${{ github.sha::7 }}
       run: |
         # Extract version from package.json (semver format: MAJOR.MINOR.PATCH)
         SOURCE_VERSION=$(awk -F'"' '/"version": ".+"/{ print $4; exit; }' package.json)
@@ -44,11 +45,11 @@ runs:
         IMAGE_TAG=${SERVICE_VERSION}-alpha.${ALPHA_ID}
         PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
 
-        # Tagging logic based on branch with semver compliance
+        # Tagging logic for dev branch using short SHA
         if [ "$REF" == "refs/heads/dev" ]; then
-          BETA_ID=$(date +'%Y%m%d')
-          IMAGE_TAG=${SERVICE_VERSION}-beta.${BETA_ID}
+          IMAGE_TAG=${SERVICE_VERSION}-${GIT_SHORT_SHA}
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
+          DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}
         fi
 
         if [ "$REF" == "refs/heads/release" ]; then

@@ -1,0 +1,71 @@
+name: build vars
+description: build deployment variables
+inputs:
+  org-name:
+    description: the organisation name
+    required: true
+  service-name:
+    description: the service name
+    required: true
+  ecr-registry:
+    description: Amazon ECR registry
+    required: true
+outputs:
+  prod-image-name:
+    description: Amazon ECR build image name
+    value: ${{ steps.build-vars.outputs.prod-image-name }}
+  dev-image-name:
+    description: Generic build image name
+    value: ${{ steps.build-vars.outputs.dev-image-name }}
+  ecr-repository:
+    description: Amazon ECR repository
+    value: ${{ steps.build-vars.outputs.ecr-repository }}
+runs:
+  using: composite
+  steps:
+    - id: build-vars
+      shell: bash
+      env:
+        ECR_REGISTRY: ${{ inputs.ecr-registry }}
+        ORG_NAME: ${{ inputs.org-name }}
+        SERVICE_NAME: ${{ inputs.service-name }}
+        ALPHA_ID: ${{ github.run_number }}
+        REF: ${{ github.ref }}
+        GIT_SHORT_SHA: ${{ github.sha::7 }}
+      run: |
+        # Dynamically determine the path to package.json based on service name
+        PACKAGE_PATH="${SERVICE_NAME}/package.json"
+        
+        # Extract version from the appropriate package.json
+        SOURCE_VERSION=$(awk -F'"' '/"version": ".+"/{ print $4; exit; }' $PACKAGE_PATH)
+        SERVICE_VERSION=v${SOURCE_VERSION}
+
+        ECR_REPOSITORY=${ORG_NAME}/${SERVICE_NAME}
+        IMAGE_NAME=${ECR_REGISTRY}/${ECR_REPOSITORY}
+        DEV_IMAGE=${ORG_NAME}/${SERVICE_NAME}:latest
+
+        # Default to semantic version (MAJOR.MINOR.PATCH)
+        IMAGE_TAG=${SERVICE_VERSION}-alpha.${ALPHA_ID}
+        PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
+
+        # Tagging logic for dev branch using short SHA
+        if [ "$REF" == "refs/heads/dev" ]; then
+          IMAGE_TAG=${SERVICE_VERSION}-${GIT_SHORT_SHA}
+          PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
+          DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}
+        fi
+
+        if [ "$REF" == "refs/heads/release" ]; then
+          IMAGE_TAG=${SERVICE_VERSION}-rc
+          PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
+        fi
+
+        if [ "$REF" == "refs/heads/main" ]; then
+          IMAGE_TAG=${SERVICE_VERSION}  # Pure semver without any suffix
+          PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
+        fi
+
+        # Output the final values
+        echo "prod-image-name=${PROD_IMAGE}" >> "$GITHUB_OUTPUT"
+        echo "dev-image-name=${DEV_IMAGE}" >> "$GITHUB_OUTPUT"
+        echo "ecr-repository=${ECR_REPOSITORY}" >> "$GITHUB_OUTPUT"

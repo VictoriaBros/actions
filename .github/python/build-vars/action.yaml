@@ -41,7 +41,7 @@ runs:
         GIT_SHORT_SHA=$(echo $GIT_SHA | cut -c1-7)
 
         ECR_REPOSITORY=${ORG_NAME}/${SERVICE_NAME}
-        # IMAGE_TAG=${SERVICE_VERSION}-alpha.${ALPHA_ID}
+        IMAGE_TAG=${SERVICE_VERSION}-alpha.${ALPHA_ID}
         IMAGE_NAME=${ECR_REGISTRY}/${ECR_REPOSITORY}
         # DEV_IMAGE=${ORG_NAME}/${SERVICE_NAME}:latest
         DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}

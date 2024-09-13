@@ -31,21 +31,26 @@ runs:
         SERVICE_NAME: ${{ inputs.service-name }}
         ALPHA_ID: ${{ github.run_number }}
         REF: ${{ github.ref }}
+        GIT_SHA: ${{ github.sha }}
       run: |
         PACKAGE="python-dotenv"
         SOURCE_VERSION=$(awk -F'==' -v package="$PACKAGE" '$1 == package { print $2; exit; }' requirements.txt)
         SERVICE_VERSION=v${SOURCE_VERSION}
 
+        # Truncate the full commit SHA to the first 7 characters for the short SHA
+        GIT_SHORT_SHA=$(echo $GIT_SHA | cut -c1-7)
+
         ECR_REPOSITORY=${ORG_NAME}/${SERVICE_NAME}
-        IMAGE_TAG=${SERVICE_VERSION}-alpha.${ALPHA_ID}
+        # IMAGE_TAG=${SERVICE_VERSION}-alpha.${ALPHA_ID}
         IMAGE_NAME=${ECR_REGISTRY}/${ECR_REPOSITORY}
-        DEV_IMAGE=${ORG_NAME}/${SERVICE_NAME}:latest
+        # DEV_IMAGE=${ORG_NAME}/${SERVICE_NAME}:latest
+        DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}
         PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
 
         if [ "$REF" == "refs/heads/dev" ]; then
-          BETA_ID=$(date +'%d%m%Y')
-          IMAGE_TAG=${SERVICE_VERSION}-beta.${BETA_ID}
+          IMAGE_TAG=${SERVICE_VERSION}-${GIT_SHORT_SHA}
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
+          DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}
         fi
 
         if [ "$REF" == "refs/heads/release" ]; then

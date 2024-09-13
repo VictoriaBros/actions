@@ -39,21 +39,13 @@ runs:
         ECR_REPOSITORY=${ORG_NAME}/${SERVICE_NAME}
         IMAGE_TAG=${SERVICE_VERSION}-alpha.${ALPHA_ID}
         IMAGE_NAME=${ECR_REGISTRY}/${ECR_REPOSITORY}
-
-        # Truncate the full commit SHA to the first 7 characters for the short SHA
-        GIT_SHORT_SHA=$(echo $GIT_SHA | cut -c1-7)
-
-        DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}
-
-        # Default to semantic version (MAJOR.MINOR.PATCH)
-        IMAGE_TAG=${SERVICE_VERSION}-alpha.${ALPHA_ID}
+        DEV_IMAGE=${ORG_NAME}/${SERVICE_NAME}:latest
         PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
 
-        # Tagging logic for dev branch using short SHA
         if [ "$REF" == "refs/heads/dev" ]; then
-          IMAGE_TAG=${SERVICE_VERSION}-${GIT_SHORT_SHA}
+          BETA_ID=$(date +'%d%m%Y')
+          IMAGE_TAG=${SERVICE_VERSION}-beta.${BETA_ID}
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
-          DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}
         fi
 
         if [ "$REF" == "refs/heads/release" ]; then

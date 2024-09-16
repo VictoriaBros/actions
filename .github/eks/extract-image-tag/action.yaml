@@ -8,8 +8,8 @@ inputs:
     description: Tag of the built image
     required: true
 runs:
-  using: composite
-   steps:
+  using: "composite"
+  steps:
     - run: |
         image_tag="${{ inputs.image_tag }}"
         # Perform string manipulation to extract the tag

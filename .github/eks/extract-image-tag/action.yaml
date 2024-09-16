@@ -9,9 +9,12 @@ inputs:
     required: true
 runs:
   using: composite
-  steps:
+   steps:
     - run: |
-        image_tag="${{ inputs.image_tag##*: }}"
-        echo $image_tag
-        sed -i "s|image-tag|${{ inputs.image_tag }}|g" "${{ inputs.values_file_path }}" 
+        image_tag="${{ inputs.image_tag }}"
+        # Perform string manipulation to extract the tag
+        extracted_tag="${image_tag##*:}"
+        echo "Extracted image tag: $extracted_tag"
+        # Update the helm values file
+        sed -i "s|image-tag|$extracted_tag|g" "${{ inputs.values_file_path }}"
       shell: bash

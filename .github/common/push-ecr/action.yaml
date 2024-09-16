@@ -1,3 +1,45 @@
+# name: push ecr
+# description: publish Docker image to Amazon ECR
+# inputs:
+#   ecr-registry:
+#     description: Amazon ECR registry
+#     required: true
+#   ecr-repository:
+#     description: Amazon ECR repository
+#     required: true
+#   dev-image-name:
+#     description: Generic build image name
+#     required: true
+#   prod-image-name:
+#     description: Amazon ECR build image name
+#     required: true
+# runs:
+#   using: composite
+#   steps:
+#     - id: push-ecr
+#       shell: bash
+#       env:
+#         ECR_REGISTRY: ${{ inputs.ecr-registry }}
+#         ECR_REPOSITORY: ${{ inputs.ecr-repository }}
+#         DEV_IMAGE: ${{ inputs.dev-image-name }}
+#         PROD_IMAGE: ${{ inputs.prod-image-name }}
+#         REF: ${{ github.ref }}
+#       run: |
+#         docker tag ${DEV_IMAGE} ${PROD_IMAGE}
+#         # Dynamically determine which image to push to ECR
+#         if [ "$REF" == "refs/heads/dev" ]; then
+#           echo "Pushing dev image: ${DEV_IMAGE}"
+#           docker push ${DEV_IMAGE}
+#         elif [ "$REF" == "refs/heads/release" ]; then
+#           echo "Pushing release image: ${DEV_IMAGE}"
+#           docker push ${DEV_IMAGE}
+#         elif [ "$REF" == "refs/heads/main" ]; then
+#           echo "Pushing prod image: ${PROD_IMAGE}"
+#           docker push ${PROD_IMAGE}
+#         else
+#           echo "Branch not recognized. No image pushed."
+#         fi
+
 name: push ecr
 description: publish Docker image to Amazon ECR
 inputs:
@@ -23,19 +65,6 @@ runs:
         ECR_REPOSITORY: ${{ inputs.ecr-repository }}
         DEV_IMAGE: ${{ inputs.dev-image-name }}
         PROD_IMAGE: ${{ inputs.prod-image-name }}
-        REF: ${{ github.ref }}
       run: |
         docker tag ${DEV_IMAGE} ${PROD_IMAGE}
-        # Dynamically determine which image to push to ECR
-        if [ "$REF" == "refs/heads/dev" ]; then
-          echo "Pushing dev image: ${DEV_IMAGE}"
-          docker push ${DEV_IMAGE}
-        elif [ "$REF" == "refs/heads/release" ]; then
-          echo "Pushing release image: ${DEV_IMAGE}"
-          docker push ${DEV_IMAGE}
-        elif [ "$REF" == "refs/heads/main" ]; then
-          echo "Pushing prod image: ${PROD_IMAGE}"
-          docker push ${PROD_IMAGE}
-        else
-          echo "Branch not recognized. No image pushed."
-        fi
+        docker push ${PROD_IMAGE}

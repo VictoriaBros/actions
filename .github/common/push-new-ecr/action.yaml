@@ -29,12 +29,15 @@ runs:
         # Dynamically determine which image to push to ECR
         if [ "$REF" == "refs/heads/dev" ]; then
           echo "Pushing dev image: ${DEV_IMAGE}"
+           docker tag ${DEV_IMAGE}
           docker push ${DEV_IMAGE}
         elif [ "$REF" == "refs/heads/release" ]; then
           echo "Pushing release image: ${DEV_IMAGE}"
+          docker tag ${DEV_IMAGE}
           docker push ${DEV_IMAGE}
         elif [ "$REF" == "refs/heads/main" ]; then
           echo "Pushing prod image: ${PROD_IMAGE}"
+          docker tag ${PROD_IMAGE}
           docker push ${PROD_IMAGE}
         else
           echo "Branch not recognized. No image pushed."

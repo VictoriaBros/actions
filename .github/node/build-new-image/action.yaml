@@ -21,4 +21,14 @@ runs:
         PROD_IMAGE: ${{ inputs.prod-image-name }}
       working-directory: ${{ inputs.service-directory }}
       run: |
-        npm run docker:build:staging -- -t ${DEV_IMAGE} -t ${PROD_IMAGE}
+        if [ "$REF" == "refs/heads/dev" ]; then
+          npm run docker:build:staging -- -t ${DEV_IMAGE} -t ${PROD_IMAGE}
+        fi
+
+        if [ "$REF" == "refs/heads/release" ]; then
+          npm run docker:build:staging -- -t ${DEV_IMAGE} -t ${PROD_IMAGE}
+        fi
+
+        if [ "$REF" == "refs/heads/main" ]; then
+          npm run docker:build -- -t ${DEV_IMAGE} -t ${PROD_IMAGE}
+        fi

@@ -30,21 +30,5 @@ runs:
         elif [ "$REF" == "refs/heads/main" ]; then
           npm run docker:build -- -t ${DEV_IMAGE} -t ${PROD_IMAGE}
         else
-          echo "Branch not recognized. No image bui."
-        fi
-
-        if [ "$REF" == "refs/heads/dev" ]; then
-          npm run docker:build:staging -- -t ${DEV_IMAGE} -t ${PROD_IMAGE}
-        fi
-
-        if [ "$REF" == "refs/pull/"* ]; then
-           npm run docker:build:staging -- -t ${DEV_IMAGE} -t ${PROD_IMAGE}
-        fi
-
-        if [ "$REF" == "refs/heads/release" ]; then
-          npm run docker:build:staging -- -t ${DEV_IMAGE} -t ${PROD_IMAGE}
-        fi
-
-        if [ "$REF" == "refs/heads/main" ]; then
-          npm run docker:build -- -t ${DEV_IMAGE} -t ${PROD_IMAGE}
+          echo "Branch not recognized. No image built."
         fi

@@ -19,6 +19,7 @@ runs:
       env:
         DEV_IMAGE: ${{ inputs.dev-image-name }}
         PROD_IMAGE: ${{ inputs.prod-image-name }}
+        REF: ${{ github.ref }}
       working-directory: ${{ inputs.service-directory }}
       run: |
         if [ "$REF" == "refs/heads/dev" ]; then

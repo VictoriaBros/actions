@@ -4,17 +4,37 @@ inputs:
   values_file_path:
     description: Path of the helm values file
     required: true
-  image_tag:
-    description: Tag of the built image
+  dev_image:
+    description: Tag of the dev image
+    required: true
+  prod_image:
+    description: Tag of the prod image
     required: true
 runs:
-  using: "composite"
+  using: composite
   steps:
     - run: |
-        image_tag="${{ inputs.image_tag }}"
-        # Perform string manipulation to extract the tag
-        extracted_tag="${image_tag##*:}"
-        echo "Extracted image tag: $extracted_tag"
-        # Update the helm values file
-        sed -i "s|image-tag|$extracted_tag|g" "${{ inputs.values_file_path }}"
+        dev_image="${{ inputs.dev_image }}"
+        prod_image="${{ inputs.prod_image }}"
+
+        # Debug: Print the full image strings to check if they are correctly passed
+        echo "Full DEV_IMAGE: $dev_image"
+        echo "Full PROD_IMAGE: $prod_image"
+
+        # Extract the tag part after the colon (:) from each image
+        dev_tag="${dev_image##*:}"
+        prod_tag="${prod_image##*:}"
+
+        echo "DEV_IMAGE tag: $dev_tag"
+        echo "PROD_IMAGE tag: $prod_tag"
+
+        # Ensure the tags are not empty
+        if [ -z "$dev_tag" ] || [ -z "$prod_tag" ]; then
+          echo "Error: One or both image tags could not be extracted."
+          exit 1
+        fi
+
+        # Update the Helm values file with the extracted tags
+        sed -i "s|dev-image-tag|$dev_tag|g" "${{ inputs.values_file_path }}"
+        sed -i "s|prod-image-tag|$prod_tag|g" "${{ inputs.values_file_path }}"
       shell: bash

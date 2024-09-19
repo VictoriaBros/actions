@@ -11,6 +11,10 @@ inputs:
     description: the service directory
     required: false
     default: .
+  build-command:
+    description: The build command to use (e.g., "npm run docker:build" or "npm run docker:build:staging")
+    required: false
+    default: "npm run docker:build"
 runs:
   using: composite
   steps:
@@ -20,6 +24,7 @@ runs:
         DEV_IMAGE: ${{ inputs.dev-image-name }}
         PROD_IMAGE: ${{ inputs.prod-image-name }}
         REF: ${{ github.ref }}
+        BUILD_COMMAND: ${{ inputs.build-command }}
       working-directory: ${{ inputs.service-directory }}
       run: |
         BUILD_COMMAND=${BUILD_COMMAND:-"npm run docker:build"}

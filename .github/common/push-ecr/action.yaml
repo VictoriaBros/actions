@@ -25,7 +25,7 @@ runs:
         PROD_IMAGE: ${{ inputs.prod-image-name }}
         REF: ${{ github.ref }}
       run: |
-        if [[ "$REF" == "refs/heads/dev" ]]; then
+        if [ "$REF" == "refs/heads/dev" ]; then
           echo "Pushing dev image: ${DEV_IMAGE}"
           docker tag ${DEV_IMAGE} ${DEV_IMAGE}
           docker push ${DEV_IMAGE}
@@ -33,11 +33,11 @@ runs:
           echo "Pushing PR image: ${DEV_IMAGE}"
           docker tag ${DEV_IMAGE} ${PROD_IMAGE}
           docker push ${DEV_IMAGE}
-        elif [[ "$REF" == "refs/heads/release" ]]; then
+        elif [ "$REF" == "refs/heads/release" ]; then
           echo "Pushing release image: ${DEV_IMAGE}"
           docker tag ${DEV_IMAGE} ${PROD_IMAGE}
           docker push ${DEV_IMAGE}
-        elif [[ "$REF" == "refs/heads/main" ]]; then
+        elif [ "$REF" == "refs/heads/main" ]; then
           echo "Pushing prod image: ${PROD_IMAGE}"
           docker tag ${DEV_IMAGE} ${PROD_IMAGE}
           docker push ${PROD_IMAGE}

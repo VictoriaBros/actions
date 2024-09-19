@@ -31,31 +31,20 @@ runs:
         SERVICE_NAME: ${{ inputs.service-name }}
         ALPHA_ID: ${{ github.run_number }}
         REF: ${{ github.ref }}
-        GIT_SHA: ${{ github.sha }}
       run: |
-        # Dynamically determine the path to package.json based on service name
-        PACKAGE_PATH="${SERVICE_NAME}/package.json"
-        
-        # Extract version from the appropriate package.json
-        SOURCE_VERSION=$(awk -F'"' '/"version": ".+"/{ print $4; exit; }' $PACKAGE_PATH)
+        SOURCE_VERSION=$(awk -F'"' '/"version": ".+"/{ print $4; exit; }' package.json)
         SERVICE_VERSION=v${SOURCE_VERSION}
 
         ECR_REPOSITORY=${ORG_NAME}/${SERVICE_NAME}
+        IMAGE_TAG=${SERVICE_VERSION}-alpha.${ALPHA_ID}
         IMAGE_NAME=${ECR_REGISTRY}/${ECR_REPOSITORY}
         DEV_IMAGE=${ORG_NAME}/${SERVICE_NAME}:latest
-        
-        # Truncate the full commit SHA to the first 7 characters for the short SHA
-        GIT_SHORT_SHA=$(echo $GIT_SHA | cut -c1-7)
-
-        # Default to semantic version (MAJOR.MINOR.PATCH)
-        IMAGE_TAG=${SERVICE_VERSION}-alpha.${ALPHA_ID}
         PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
 
-        # Tagging logic for dev branch using short SHA
         if [ "$REF" == "refs/heads/dev" ]; then
-          IMAGE_TAG=${SERVICE_VERSION}-${GIT_SHORT_SHA}
+          BETA_ID=$(date +'%d%m%Y')
+          IMAGE_TAG=${SERVICE_VERSION}-beta.${BETA_ID}
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
-          DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}
         fi
 
         if [ "$REF" == "refs/heads/release" ]; then
@@ -64,11 +53,10 @@ runs:
         fi
 
         if [ "$REF" == "refs/heads/main" ]; then
-          IMAGE_TAG=${SERVICE_VERSION}  # Pure semver without any suffix
+          IMAGE_TAG=${SERVICE_VERSION}
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
         fi
 
-        # Output the final values
         echo "prod-image-name=${PROD_IMAGE}" >> "$GITHUB_OUTPUT"
         echo "dev-image-name=${DEV_IMAGE}" >> "$GITHUB_OUTPUT"
         echo "ecr-repository=${ECR_REPOSITORY}" >> "$GITHUB_OUTPUT"

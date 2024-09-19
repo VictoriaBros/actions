@@ -19,6 +19,22 @@ runs:
       env:
         DEV_IMAGE: ${{ inputs.dev-image-name }}
         PROD_IMAGE: ${{ inputs.prod-image-name }}
+        REF: ${{ github.ref }}
       working-directory: ${{ inputs.service-directory }}
       run: |
-        npm run docker:build -- -t ${DEV_IMAGE} -t ${PROD_IMAGE}
+        BUILD_COMMAND=${BUILD_COMMAND:-"npm run docker:build"}
+        if [ "$REF" == "refs/heads/dev" ]; then
+          echo "Building for dev branch: REF is $REF"
+          ${BUILD_COMMAND} -- -t ${DEV_IMAGE} -t ${PROD_IMAGE}
+        elif [[ "$REF" == refs/pull/* ]]; then
+          echo "Building for pull request: REF is $REF"
+          ${BUILD_COMMAND} -- -t ${DEV_IMAGE} -t ${PROD_IMAGE}
+        elif [ "$REF" == "refs/heads/release" ]; then
+          echo "Building for release branch: REF is $REF"
+          ${BUILD_COMMAND} -- -t ${DEV_IMAGE} -t ${PROD_IMAGE}
+        elif [ "$REF" == "refs/heads/main" ]; then
+          echo "Building for main branch: REF is $REF"
+          ${BUILD_COMMAND} -- -t ${DEV_IMAGE} -t ${PROD_IMAGE}
+        else
+          echo "Branch not recognized. REF is $REF. No image built."
+        fi

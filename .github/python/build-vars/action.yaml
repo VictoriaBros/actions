@@ -32,9 +32,19 @@ runs:
         ALPHA_ID: ${{ github.run_number }}
         REF: ${{ github.ref }}
         GIT_SHA: ${{ github.sha }}
+
       run: |
         PACKAGE="python-dotenv"
-        SOURCE_VERSION=$(awk -F'==' -v package="$PACKAGE" '$1 == package { print $2; exit; }' requirements.txt | tr -d '\r')
+        SOURCE_VERSION=$(awk -F'==' -v package="$PACKAGE" '
+          {
+            print "Checking line:", $0;     # Debug: Print each line
+            if ($1 == package) {
+              print "Match found for", package, "with version:", $2;  # Debug: Print match
+              print $2; exit;
+            }
+          }' requirements.txt | tr -d '\r')
+
+        echo "Extracted version: $SOURCE_VERSION"
 
         # Define the service version before using it in IMAGE_TAG
         SERVICE_VERSION_NUMBER=v${SOURCE_VERSION}

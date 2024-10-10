@@ -34,7 +34,7 @@ runs:
         GIT_SHA: ${{ github.sha }}
 
       run: |
-        PACKAGE="python-dotenv"
+        PACKAGE="python-dotenv==1.0.1"
         SOURCE_VERSION=$(awk -F'==' -v package="$PACKAGE" '
           {
             print "Checking line:", $0;     # Debug: Print each line

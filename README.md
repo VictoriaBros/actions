@@ -15,3 +15,16 @@ See actions yaml file for input and output
 - [node](./.github/node)
   - [build-image](./.github/node/build-image/action.yaml)
   - [run-test](./.github/node/run-test/action.yaml)
+
+- [eks](./.github/eks)
+  - [aws-cli](./.github/eks/aws-cli/action.yaml)
+  - [deploy-helm](./.github/eks/deploy-helm/action.yaml)
+  - [eksctl](./.github/eks/eksctl/action.yaml)
+  - [extract-image-tag](./.github/eks/extract-image-tag/action.yaml)
+  - [setup-helm](./.github/eks/setup-helm/action.yaml)
+  - [setup-iam](./.github/eks/setup-iam/action.yaml)
+  - [update-kubeconfig](./.github/eks/update-kubeconfig/action.yaml)
+
+- [python](./.github/python)
+  - [build-image](./.github/python/build-image/action.yaml)
+  - [build-vars](./.github/python/build-vars/action.yaml)

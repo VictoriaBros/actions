@@ -34,7 +34,8 @@ runs:
         GIT_SHA: ${{ github.sha }}
       run: |
         PACKAGE="python-dotenv"
-        SOURCE_VERSION=$(awk -F'==' -v package="$PACKAGE" '$1 == package { print $2; exit; }' requirements.txt)
+        SOURCE_VERSION=$(awk -F'==' -v package="$PACKAGE" '$1 == package { print $2; exit; }' requirements.txt | tr -d '\r')
+        # SOURCE_VERSION=$(awk -F'==' -v package="$PACKAGE" '$1 == package { print $2; exit; }' requirements.txt)
         SERVICE_VERSION=v${SOURCE_VERSION}
 
         # Truncate the full commit SHA to the first 7 characters for the short SHA

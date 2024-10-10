@@ -27,7 +27,7 @@ runs:
       run: |
         if [ "$REF" == "refs/heads/dev" ]; then
           echo "Pushing dev image: ${DEV_IMAGE}"
-          docker tag ${DEV_IMAGE} ${DEV_IMAGE}
+          docker tag ${DEV_IMAGE} ${PROD_IMAGE}
           docker push ${DEV_IMAGE}
         elif [[ "$REF" == "refs/pull/"* ]]; then
           echo "Pushing PR image: ${DEV_IMAGE}"

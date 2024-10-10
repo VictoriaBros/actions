@@ -35,18 +35,7 @@ runs:
 
       run: |
         PACKAGE="python-dotenv"
-        SOURCE_VERSION=$(awk -F'==' -v package="$PACKAGE" '
-          {
-            # Debug: Print each line to check the content
-            print "Checking line:", $0;
-            # Match the package name exactly
-            if ($1 == package) {
-              # Debug: Print the matched package and version
-              print "Match found for", package, "with version:", $2;
-              # Output the version and exit
-              print $2; exit;
-            }
-          }' requirements.txt | tr -d '\r')
+        SOURCE_VERSION=$(awk -F'==' -v package="$PACKAGE" '$1 == package { print $2; exit; }' requirements.txt | tr -d '\r')
 
         echo "Extracted version: $SOURCE_VERSION"
 

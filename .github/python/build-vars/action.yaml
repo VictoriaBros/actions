@@ -35,7 +35,8 @@ runs:
       run: |
         PACKAGE="python-dotenv"
         SOURCE_VERSION=$(awk -F'==' -v package="$PACKAGE" '$1 == package { print $2; exit; }' requirements.txt | tr -d '\r')
-        # SOURCE_VERSION=$(awk -F'==' -v package="$PACKAGE" '$1 == package { print $2; exit; }' requirements.txt)
+
+        # Define the service version before using it in IMAGE_TAG
         SERVICE_VERSION_NUMBER=v${SOURCE_VERSION}
 
         # Truncate the full commit SHA to the first 7 characters for the short SHA

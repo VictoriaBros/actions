@@ -34,20 +34,25 @@ runs:
         GIT_SHA: ${{ github.sha }}
 
       run: |
-        PACKAGE="python-dotenv==1.0.1"
+        PACKAGE="python-dotenv"
         SOURCE_VERSION=$(awk -F'==' -v package="$PACKAGE" '
           {
-            print "Checking line:", $0;     # Debug: Print each line
+            # Debug: Print each line to check the content
+            print "Checking line:", $0;
+            # Match the package name exactly
             if ($1 == package) {
-              print "Match found for", package, "with version:", $2;  # Debug: Print match
+              # Debug: Print the matched package and version
+              print "Match found for", package, "with version:", $2;
+              # Output the version and exit
               print $2; exit;
             }
           }' requirements.txt | tr -d '\r')
 
         echo "Extracted version: $SOURCE_VERSION"
 
-        # Define the service version before using it in IMAGE_TAG
+        # Define the service version with the extracted version number
         SERVICE_VERSION_NUMBER=v${SOURCE_VERSION}
+        echo "Service version number: $SERVICE_VERSION_NUMBER"
 
         # Truncate the full commit SHA to the first 7 characters for the short SHA
         GIT_SHORT_SHA=$(echo $GIT_SHA | cut -c1-7)

@@ -36,31 +36,31 @@ runs:
         PACKAGE="python-dotenv"
         SOURCE_VERSION=$(awk -F'==' -v package="$PACKAGE" '$1 == package { print $2; exit; }' requirements.txt | tr -d '\r')
         # SOURCE_VERSION=$(awk -F'==' -v package="$PACKAGE" '$1 == package { print $2; exit; }' requirements.txt)
-        SERVICE_VERSION=v${SOURCE_VERSION}
+        SERVICE_VERSION_NUMBER=v${SOURCE_VERSION}
 
         # Truncate the full commit SHA to the first 7 characters for the short SHA
         GIT_SHORT_SHA=$(echo $GIT_SHA | cut -c1-7)
 
         ECR_REPOSITORY=${ORG_NAME}/${SERVICE_NAME}
-        IMAGE_TAG=${SERVICE_VERSION}-alpha.${ALPHA_ID}
+        IMAGE_TAG=${SERVICE_VERSION_NUMBER}-alpha.${ALPHA_ID}
         IMAGE_NAME=${ECR_REGISTRY}/${ECR_REPOSITORY}
 
         DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}
         PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
 
         if [ "$REF" == "refs/heads/dev" ]; then
-          IMAGE_TAG=${SERVICE_VERSION}-${GIT_SHORT_SHA}
+          IMAGE_TAG=${SERVICE_VERSION_NUMBER}-${GIT_SHORT_SHA}
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
           DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}
         fi
 
         if [ "$REF" == "refs/heads/release" ]; then
-          IMAGE_TAG=${SERVICE_VERSION}-rc
+          IMAGE_TAG=${SERVICE_VERSION_NUMBER}-rc
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
         fi
 
         if [ "$REF" == "refs/heads/main" ]; then
-          IMAGE_TAG=${SERVICE_VERSION}
+          IMAGE_TAG=${SERVICE_VERSION_NUMBER}
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
         fi
 

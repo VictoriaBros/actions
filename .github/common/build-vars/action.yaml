@@ -61,24 +61,26 @@ runs:
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
           DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}
 
-        elif [ "$REF" == "refs/heads/release/"* ]; then
+        elif [[ "$REF" == refs/heads/release/* ]]; then
           IMAGE_TAG=${SERVICE_VERSION}-rel
           RELEASE_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
 
-        elif [ "$REF" == "refs/heads/feature/"* ]; then
+        elif [[ "$REF" == refs/heads/feature/* ]]; then
           IMAGE_TAG=${SERVICE_VERSION}-feat
           FEATURE_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
         
-        elif [ "$REF" == "refs/pull/"* ]; then
+        elif [[ "$REF" == refs/pull/* ]]; then
           IMAGE_TAG=${SERVICE_VERSION}-${GIT_SHORT_SHA}
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
           DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}
 
         elif [ "$REF" == "refs/heads/main" ]; then
-          IMAGE_TAG=${SERVICE_VERSION}  # Pure semver without any suffix
+          IMAGE_TAG=${SERVICE_VERSION} 
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
         
         else
+          IMAGE_TAG=${SERVICE_VERSION}
+          PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
           echo "Branch not recognized. No image built."
         fi
 

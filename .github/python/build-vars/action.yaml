@@ -63,12 +63,12 @@ runs:
           IMAGE_TAG=${SERVICE_VERSION_NUMBER}-${GIT_SHORT_SHA}
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
           DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}
-
-        elif [ "$REF" == "refs/heads/release/"* ]; then
+        
+        elif [[ "$REF" == refs/heads/release/* ]]; then
           IMAGE_TAG=${SERVICE_VERSION_NUMBER}-rel
           RELEASE_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
         
-        elif [ "$REF" == "refs/heads/feature/"* ]; then
+        elif [[ "$REF" == refs/heads/feature/* ]]; then
           IMAGE_TAG=${SERVICE_VERSION_NUMBER}-feat
           FEATURE_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
 
@@ -77,6 +77,8 @@ runs:
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
         
         else
+          IMAGE_TAG=${SERVICE_VERSION}
+          PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
           echo "Branch not recognized. No image built."
         fi
 

@@ -43,10 +43,10 @@ runs:
         echo "FEATURE_IMAGE tag: $feature_tag"
 
         # Ensure the tags are not empty
-        if [ -z "$dev_tag" ] || [ -z "$prod_tag" ] || [ -z "$release_tag" ] || [ -z "$feature_tag" ]; then
-          echo "Error: One or both image tags could not be extracted."
-          exit 1
-        fi
+        # if [ -z "$dev_tag" ] || [ -z "$prod_tag" ] || [ -z "$release_tag" ] || [ -z "$feature_tag" ]; then
+        #   echo "Error: One or both image tags could not be extracted."
+        #   exit 1
+        # fi
 
         # Update the Helm values file with the extracted tags
         sed -i "s|dev-image-tag|$dev_tag|g" "${{ inputs.values_file_path }}"

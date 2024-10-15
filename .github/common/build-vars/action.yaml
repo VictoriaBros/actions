@@ -74,9 +74,12 @@ runs:
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
           DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}
 
-        else [ "$REF" == "refs/heads/main" ]; then
+        elif [ "$REF" == "refs/heads/main" ]; then
           IMAGE_TAG=${SERVICE_VERSION}  # Pure semver without any suffix
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
+        
+        else
+          echo "Branch not recognized. No image built."
         fi
 
         # Output the final values

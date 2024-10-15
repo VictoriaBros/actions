@@ -72,9 +72,12 @@ runs:
           IMAGE_TAG=${SERVICE_VERSION_NUMBER}-feat
           FEATURE_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
 
-        else [ "$REF" == "refs/heads/main" ]; then
+        elif [ "$REF" == "refs/heads/main" ]; then
           IMAGE_TAG=${SERVICE_VERSION_NUMBER}
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
+        
+        else
+          echo "Branch not recognized. No image built."
         fi
 
         echo "prod-image-name=${PROD_IMAGE}" >> "$GITHUB_OUTPUT"

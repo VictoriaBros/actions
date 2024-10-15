@@ -10,26 +10,40 @@ inputs:
   prod_image:
     description: Tag of the prod image
     required: true
+  release_image:
+    description: Tag of the release image
+    required: true
+  feature_image:
+    description: Tag of the feature image
+    required: true
 runs:
   using: composite
   steps:
     - run: |
         dev_image="${{ inputs.dev_image }}"
         prod_image="${{ inputs.prod_image }}"
+        release_image="${{ inputs.release_image }}"
+        feature_image="${{ inputs.feature_image }}"
 
         # Debug: Print the full image strings to check if they are correctly passed
         echo "Full DEV_IMAGE: $dev_image"
         echo "Full PROD_IMAGE: $prod_image"
+        echo "Full RELEASE_IMAGE: $release_image"
+        echo "Full FEATURE_IMAGE: $feature_image"
 
         # Extract the tag part after the colon (:) from each image
         dev_tag="${dev_image##*:}"
         prod_tag="${prod_image##*:}"
+        release_tag="${release_image##*:}"
+        feature_tag="${feature_image##*:}"
 
         echo "DEV_IMAGE tag: $dev_tag"
         echo "PROD_IMAGE tag: $prod_tag"
+        echo "RELEASE_IMAGE tag: $release_tag"
+        echo "FEATURE_IMAGE tag: $feature_tag"
 
         # Ensure the tags are not empty
-        if [ -z "$dev_tag" ] || [ -z "$prod_tag" ]; then
+        if [ -z "$dev_tag" ] || [ -z "$prod_tag" ] || [ -z "$release_tag" ] || [ -z "$feature_tag" ]; then
           echo "Error: One or both image tags could not be extracted."
           exit 1
         fi
@@ -37,4 +51,6 @@ runs:
         # Update the Helm values file with the extracted tags
         sed -i "s|dev-image-tag|$dev_tag|g" "${{ inputs.values_file_path }}"
         sed -i "s|prod-image-tag|$prod_tag|g" "${{ inputs.values_file_path }}"
+        sed -i "s|release-image-tag|$release_tag|g" "${{ inputs.values_file_path }}"
+        sed -i "s|feature-image-tag|$feature_tag|g" "${{ inputs.values_file_path }}"
       shell: bash

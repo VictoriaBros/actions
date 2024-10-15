@@ -17,6 +17,12 @@ outputs:
   dev-image-name:
     description: Generic build image name
     value: ${{ steps.build-vars.outputs.dev-image-name }}
+  release-image-name:
+    description: Amazon ECR build image name
+    value: ${{ steps.build-vars.outputs.release-image-name }}
+  feature-image-name:
+    description: Generic build image name
+    value: ${{ steps.build-vars.outputs.feature-image-name }}
   ecr-repository:
     description: Amazon ECR repository
     value: ${{ steps.build-vars.outputs.ecr-repository }}
@@ -57,18 +63,22 @@ runs:
           IMAGE_TAG=${SERVICE_VERSION_NUMBER}-${GIT_SHORT_SHA}
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
           DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}
-        fi
 
-        if [ "$REF" == "refs/heads/release" ]; then
-          IMAGE_TAG=${SERVICE_VERSION_NUMBER}-rc
-          PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
-        fi
+        elif [ "$REF" == "refs/heads/release" ]; then
+          IMAGE_TAG=${SERVICE_VERSION_NUMBER}-rel
+          RELEASE_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
+        
+        elif [ "$REF" == "refs/heads/feature" ]; then
+          IMAGE_TAG=${SERVICE_VERSION_NUMBER}-feat
+          FEATURE_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
 
-        if [ "$REF" == "refs/heads/main" ]; then
+        else [ "$REF" == "refs/heads/main" ]; then
           IMAGE_TAG=${SERVICE_VERSION_NUMBER}
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
         fi
 
         echo "prod-image-name=${PROD_IMAGE}" >> "$GITHUB_OUTPUT"
         echo "dev-image-name=${DEV_IMAGE}" >> "$GITHUB_OUTPUT"
+        echo "release-image-name=${RELEASE_IMAGE}" >> "$GITHUB_OUTPUT"
+        echo "feature-image-name=${FEATURE_IMAGE}" >> "$GITHUB_OUTPUT"
         echo "ecr-repository=${ECR_REPOSITORY}" >> "$GITHUB_OUTPUT"

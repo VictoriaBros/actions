@@ -7,6 +7,12 @@ inputs:
   prod-image-name:
     description: Amazon ECR build image name
     required: true
+  feature-image-name:
+    description: Generic build image name
+    required: true
+  release-image-name:
+    description: Amazon ECR build image name
+    required: true
   service-directory:
     description: the service directory
     required: false
@@ -19,6 +25,8 @@ runs:
       env:
         DEV_IMAGE: ${{ inputs.dev-image-name }}
         PROD_IMAGE: ${{ inputs.prod-image-name }}
+        RELEASE_IMAGE: ${{ inputs.release-image-name }}
+        FEATURE_IMAGE: ${{ inputs.feature-image-name }}
       working-directory: ${{ inputs.service-directory }}
       run: |
-        docker build -t ${DEV_IMAGE} -t ${PROD_IMAGE} .
+        docker build -t ${DEV_IMAGE} -t ${PROD_IMAGE} -t ${RELEASE_IMAGE} -t ${FEATURE_IMAGE} .

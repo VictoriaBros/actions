@@ -74,7 +74,7 @@ runs:
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
           DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}
 
-        if [ "$REF" == "refs/heads/main" ]; then
+        else [ "$REF" == "refs/heads/main" ]; then
           IMAGE_TAG=${SERVICE_VERSION}  # Pure semver without any suffix
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
         fi

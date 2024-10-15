@@ -64,11 +64,11 @@ runs:
           PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
           DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}
 
-        elif [ "$REF" == "refs/heads/release" ]; then
+        elif [ "$REF" == "refs/heads/release/"* ]; then
           IMAGE_TAG=${SERVICE_VERSION_NUMBER}-rel
           RELEASE_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
         
-        elif [ "$REF" == "refs/heads/feature" ]; then
+        elif [ "$REF" == "refs/heads/feature/"* ]; then
           IMAGE_TAG=${SERVICE_VERSION_NUMBER}-feat
           FEATURE_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
 

@@ -38,12 +38,12 @@ runs:
           docker tag ${DEV_IMAGE} ${PROD_IMAGE}
           docker push ${DEV_IMAGE}
         
-        elif [ "$REF" == "refs/heads/release" ]; then
+        elif [ "$REF" == "refs/heads/release/"* ]; then
           echo "Pushing release image: ${RELEASE_IMAGE}"
           docker tag ${RELEASE_IMAGE} ${PROD_IMAGE}
           docker push ${RELEASE_IMAGE}
         
-        elif [ "$REF" == "refs/heads/feature" ]; then
+        elif [ "$REF" == "refs/heads/feature/"* ]; then
           echo "Pushing feature image: ${FEATURE_IMAGE}"
           docker tag ${FEATURE_IMAGE} ${PROD_IMAGE}
           docker push ${FEATURE_IMAGE}

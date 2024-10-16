@@ -41,13 +41,13 @@ runs:
 
       run: |
         PACKAGE="python-dotenv"
-        grep "$PACKAGE" requirements.txt
-        SOURCE_VERSION=$(awk -F'==' -v package="$PACKAGE" '$1 == package { print $2; exit; }' requirements.txt | tr -d '\r')
-
-        if [[ -z "$SOURCE_VERSION" ]]; then
-            echo "Error: Could not find $PACKAGE version in requirements.txt."
-            exit 1
+        if grep -q "$PACKAGE" requirements.txt; then
+            echo "python-dotenv found in requirements.txt."
+        else 
+          echo "$PACKAGE" is not found in requirements.txt
         fi
+
+        SOURCE_VERSION=$(awk -F'==' -v package="$PACKAGE" '$1 == package { print $2; exit; }' requirements.txt | tr -d '\r')
 
         echo "Extracted version: $SOURCE_VERSION"
 

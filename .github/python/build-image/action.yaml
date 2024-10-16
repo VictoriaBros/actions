@@ -50,8 +50,6 @@ runs:
            docker build -t ${DEV_IMAGE}  -t ${PROD_IMAGE} .
         
         else
-          IMAGE_TAG=${SERVICE_VERSION}
-          PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
-          echo "Branch not recognized. No image built."
+          docker build -t ${DEV_IMAGE}  -t ${PROD_IMAGE} .
           echo "Branch not recognized. REF is $REF. No image built."
         fi

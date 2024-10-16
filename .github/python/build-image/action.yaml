@@ -29,4 +29,29 @@ runs:
         FEATURE_IMAGE: ${{ inputs.feature-image-name }}
       working-directory: ${{ inputs.service-directory }}
       run: |
-        docker build -t ${DEV_IMAGE} -t ${PROD_IMAGE} -t ${RELEASE_IMAGE} -t ${FEATURE_IMAGE} .
+        if [ "$REF" == "refs/heads/dev" ]; then
+          echo "Building for dev branch: REF is $REF"
+          docker build -t ${DEV_IMAGE}  -t ${PROD_IMAGE} .
+        
+        elif [[ "$REF" == refs/pull/* ]]; then
+          echo "Building for pull request: REF is $REF"
+          docker build -t ${DEV_IMAGE}  -t ${PROD_IMAGE} .
+
+        elif [[ "$REF" == refs/heads/release/* ]]; then
+          echo "Building for release branch: REF is $REF"
+          docker build -t ${RELEASE_IMAGE} -t ${PROD_IMAGE} .
+        
+         elif [[ "$REF" == refs/heads/feature/* ]]; then
+          echo "Building for feature branch: REF is $REF"
+          docker build -t ${FEATURE_IMAGE} -t ${PROD_IMAGE} .
+        
+        elif [ "$REF" == "refs/heads/main" ]; then
+           echo "Building for main branch: REF is $REF"
+           docker build -t ${DEV_IMAGE}  -t ${PROD_IMAGE} .
+        
+        else
+          IMAGE_TAG=${SERVICE_VERSION}
+          PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
+          echo "Branch not recognized. No image built."
+          echo "Branch not recognized. REF is $REF. No image built."
+        fi

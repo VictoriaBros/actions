@@ -40,19 +40,15 @@ runs:
         GIT_SHA: ${{ github.sha }}
 
       run: |
-        PACKAGE="python-dotenv"
-        if grep -q "$PACKAGE" requirements.txt; then
-            echo "python-dotenv found in requirements.txt."
-        else 
-          echo "$PACKAGE" is not found in requirements.txt
-        fi
+        PACKAGE="python-dotenv==1.0.1"
 
-        SOURCE_VERSION=$(awk -F'==' -v package="$PACKAGE" '$1 == package { print $2; exit; }' requirements.txt | tr -d '\r')
+        # Extract the version directly from the PACKAGE variable
+        SOURCE_VERSION=$(echo "$PACKAGE" | awk -F'==' '{ print $2 }' | tr -d '\r')
 
         echo "Extracted version: $SOURCE_VERSION"
 
         # Define the service version with the extracted version number
-        SERVICE_VERSION_NUMBER=v${SOURCE_VERSION}
+        SERVICE_VERSION_NUMBER="v${SOURCE_VERSION}"
         echo "Service version number: $SERVICE_VERSION_NUMBER"
 
         # Truncate the full commit SHA to the first 7 characters for the short SHA

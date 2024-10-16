@@ -53,6 +53,7 @@ runs:
           echo "Pushing PR image: ${DEV_IMAGE}"
           docker tag ${DEV_IMAGE} ${PROD_IMAGE}
           docker push ${DEV_IMAGE}
+          docker push ${PROD_IMAGE}
 
         elif [ "$REF" == "refs/heads/main" ]; then
           echo "Pushing prod image: ${PROD_IMAGE}"

@@ -27,6 +27,7 @@ runs:
         PROD_IMAGE: ${{ inputs.prod-image-name }}
         RELEASE_IMAGE: ${{ inputs.release-image-name }}
         FEATURE_IMAGE: ${{ inputs.feature-image-name }}
+        REF: ${{ github.ref }}
       working-directory: ${{ inputs.service-directory }}
       run: |
         if [ "$REF" == "refs/heads/dev" ]; then

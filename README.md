@@ -20,6 +20,7 @@ See actions yaml file for input and output
   - [aws-cli](./.github/eks/aws-cli/action.yaml)
   - [deploy-helm](./.github/eks/deploy-helm/action.yaml)
   - [eksctl](./.github/eks/eksctl/action.yaml)
+  - [extract-canary-image-tag](.github/eks/extract-canary-image-tag)
   - [extract-image-tag](./.github/eks/extract-image-tag/action.yaml)
   - [setup-helm](./.github/eks/setup-helm/action.yaml)
   - [setup-iam](./.github/eks/setup-iam/action.yaml)

@@ -1,0 +1,34 @@
+name: extract image tag
+description: extract and edit image tag into canary values file
+inputs:
+  canary_values_file_path:
+    description: Path of the canary values file
+    required: true
+  release_canary_image:
+    description: Tag of the release image
+    required: true
+  feature_canary_image:
+    description: Tag of the feature image
+    required: true
+runs:
+  using: composite
+  steps:
+    - run: |
+        release_canary_image="${{ inputs.release_canary_image }}"
+        feature_canary_image="${{ inputs.feature_canary_image }}"
+
+        # Debug: Print the full image strings to check if they are correctly passed
+        echo "Full RELEASE_CANARY_IMAGE: $release_canary_image"
+        echo "Full FEATURE_CANARY_IMAGE: $feature_canary_image"
+
+        # Extract the tag part after the colon (:) from each image
+        release_canary_tag="${release_canary_image##*:}"
+        feature_canary_tag="${feature_canary_image##*:}"
+
+        echo "RELEASE_CANARY_IMAGE tag: $release_canary_tag"
+        echo "FEATURE_CANARY_IMAGE tag: $feature_canary_tag"
+
+        # Update the canary values file with the extracted tags
+        sed -i "s|release_canary_tag|$release_canary_tag|g" "${{ inputs.values_file_path }}"
+        sed -i "s|feature_canary_tag|$feature_canary_tag|g" "${{ inputs.values_file_path }}"
+      shell: bash

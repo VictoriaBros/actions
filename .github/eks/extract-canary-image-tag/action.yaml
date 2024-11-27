@@ -29,6 +29,6 @@ runs:
         echo "FEATURE_CANARY_IMAGE tag: $feature_canary_tag"
 
         # Update the canary values file with the extracted tags
-        sed -i "s|release_canary_tag|$release_canary_tag|g" "${{ inputs.values_file_path }}"
-        sed -i "s|feature_canary_tag|$feature_canary_tag|g" "${{ inputs.values_file_path }}"
+        sed -i "s|release_canary_tag|$release_canary_tag|g" "${{ inputs.canary_values_file_path }}"
+        sed -i "s|feature_canary_tag|$feature_canary_tag|g" "${{ inputs.canary_values_file_path }}"
       shell: bash

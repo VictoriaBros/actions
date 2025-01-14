@@ -1,0 +1,60 @@
+name: build image
+description: build docker image
+inputs:
+  dev-image-name:
+    description: Generic build image name
+    required: true
+  prod-image-name:
+    description: Amazon ECR build image name
+    required: true
+  feature-image-name:
+    description: Generic build image name
+    required: true
+  release-image-name:
+    description: Amazon ECR build image name
+    required: true
+  service-directory:
+    description: the service directory
+    required: false
+    default: .
+  build-args:
+    description: The build command to use (e.g., "npm run docker:build" or "npm run docker:build:staging")
+    required: false
+runs:
+  using: composite
+  steps:
+    - id: build-image
+      shell: bash
+      env:
+        DEV_IMAGE: ${{ inputs.dev-image-name }}
+        PROD_IMAGE: ${{ inputs.prod-image-name }}
+        RELEASE_IMAGE: ${{ inputs.release-image-name }}
+        FEATURE_IMAGE: ${{ inputs.feature-image-name }}
+        REF: ${{ github.ref }}
+        BUILD_ARGS: ${{ inputs.build-args }}
+      working-directory: ${{ inputs.service-directory }}
+      run: |
+        if [ "$REF" == "refs/heads/dev" ]; then
+          echo "Building for dev branch: REF is $REF"
+          docker build . -t ${DEV_IMAGE}  -t ${PROD_IMAGE} ${BUILD_ARGS}
+
+        elif [[ "$REF" == refs/pull/* ]]; then
+          echo "Building for pull request: REF is $REF"
+          docker build . -t ${DEV_IMAGE}  -t ${PROD_IMAGE} ${BUILD_ARGS}
+
+        elif [[ "$REF" == "refs/heads/release/"* ]]; then
+          echo "Building for release branch: REF is $REF"
+          docker build . -t ${RELEASE_IMAGE} -t ${PROD_IMAGE} ${BUILD_ARGS}
+
+        elif [[ "$REF" == refs/heads/feature/* ]]; then
+          echo "Building for feature branch: REF is $REF"
+          docker build . -t ${FEATURE_IMAGE} -t ${PROD_IMAGE} ${BUILD_ARGS}
+
+        elif [ "$REF" == "refs/heads/main" ]; then
+          echo "Building for main branch: REF is $REF"
+          docker build . -t ${DEV_IMAGE}  -t ${PROD_IMAGE} ${BUILD_ARGS}
+
+        else
+          docker build -t ${DEV_IMAGE}  -t ${PROD_IMAGE} .
+          echo "Branch not recognized. REF is $REF. No image built."
+        fi

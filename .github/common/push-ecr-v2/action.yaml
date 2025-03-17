@@ -1,4 +1,4 @@
-name: push ecr
+name: push ecr v2
 description: publish Docker image to Amazon ECR
 inputs:
   ecr-registry:

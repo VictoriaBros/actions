@@ -36,23 +36,23 @@ runs:
       run: |
         if [ "$REF" == "refs/heads/dev" ]; then
           echo "Building for dev branch: REF is $REF"
-          docker build . -t ${DEV_IMAGE}  -t ${PROD_IMAGE} ${BUILD_ARGS}
+          docker build ${BUILD_ARGS} -t ${DEV_IMAGE} -t ${PROD_IMAGE} .
 
         elif [[ "$REF" == refs/pull/* ]]; then
           echo "Building for pull request: REF is $REF"
-          docker build . -t ${DEV_IMAGE}  -t ${PROD_IMAGE} ${BUILD_ARGS}
+          docker build ${BUILD_ARGS} -t ${DEV_IMAGE} -t ${PROD_IMAGE} .
 
         elif [[ "$REF" == "refs/heads/release/"* ]]; then
           echo "Building for release branch: REF is $REF"
-          docker build . -t ${RELEASE_IMAGE} -t ${PROD_IMAGE} ${BUILD_ARGS}
+          docker build ${BUILD_ARGS} -t ${RELEASE_IMAGE} -t ${PROD_IMAGE} .
 
         elif [[ "$REF" == refs/heads/feature/* ]]; then
           echo "Building for feature branch: REF is $REF"
-          docker build . -t ${FEATURE_IMAGE} -t ${PROD_IMAGE} ${BUILD_ARGS}
+          docker build ${BUILD_ARGS} -t ${FEATURE_IMAGE} -t ${PROD_IMAGE} .
 
         elif [ "$REF" == "refs/heads/main" ]; then
           echo "Building for main branch: REF is $REF"
-          docker build . -t ${DEV_IMAGE}  -t ${PROD_IMAGE} ${BUILD_ARGS}
+          docker build ${BUILD_ARGS} -t ${DEV_IMAGE} -t ${PROD_IMAGE} .
 
         else
           docker build -t ${DEV_IMAGE}  -t ${PROD_IMAGE} .

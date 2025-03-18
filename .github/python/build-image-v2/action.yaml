@@ -18,7 +18,7 @@ inputs:
     required: false
     default: .
   build-args:
-    description: The build command to use (e.g., "npm run docker:build" or "npm run docker:build:staging")
+    description: The build arguments to apply
     required: false
 runs:
   using: composite
@@ -55,6 +55,6 @@ runs:
           docker build ${BUILD_ARGS} . -t ${DEV_IMAGE} -t ${PROD_IMAGE}
 
         else
-          docker build -t ${DEV_IMAGE}  -t ${PROD_IMAGE} .
+          docker build ${BUILD_ARGS} . -t ${DEV_IMAGE} -t ${PROD_IMAGE}
           echo "Branch not recognized. REF is $REF. No image built."
         fi

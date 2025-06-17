@@ -28,3 +28,8 @@ See actions yaml file for input and output
 - [python](./.github/python)
   - [build-image](./.github/python/build-image)
   - [build-vars](./.github/python/build-vars)
+
+- [eas](./.github/eas)
+  - [eas-build](./.github/eas/eas-build/action.yaml)
+  - [setup-jdk-generate-apk](./.github/eas/setup-jdk-generate-apk/action.yaml)
+  - [setup-node-pnpm-install](./.github/eas/setup-node-pnpm-install/action.yaml)

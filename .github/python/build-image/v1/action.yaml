@@ -1,4 +1,4 @@
-name: build image
+name: build image - ver. 1
 description: build docker image
 inputs:
   dev-image-name:

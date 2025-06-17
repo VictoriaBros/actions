@@ -1,4 +1,4 @@
-name: build vars
+name: build vars - ver. 1
 description: build deployment variables
 inputs:
   org-name:

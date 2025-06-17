@@ -1,4 +1,4 @@
-name: extract image tag
+name: extract image tag - canary
 description: extract and edit image tag into canary values file
 inputs:
   canary_values_file_path:

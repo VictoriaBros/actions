@@ -1,4 +1,4 @@
-name: extract image tag
+name: extract image tag - ver. 1
 description: extract and edit image tag into helm values file
 inputs:
   values_file_path:

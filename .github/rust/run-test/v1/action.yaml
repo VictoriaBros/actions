@@ -7,9 +7,18 @@ inputs:
 runs:
   using: composite
   steps:
+
     - id: run-fmt
+      shell: bash
       working-directory: ${{ inputs.service-directory }}
-      uses: actions-rust-lang/rustfmt@v1
+      run: |
+        cargo fmt --all --check
+
+    - id: run-lint
+      shell: bash
+      working-directory: ${{ inputs.service-directory }}
+      run: |
+        cargo clippy --all-targets --all-features -- -D warnings
 
     - id: run-test
       shell: bash

@@ -1,0 +1,30 @@
+name: run test
+description: run service test
+inputs:
+  service-name:
+    description: the service name
+    required: true
+  service-directory:
+    description: the service directory
+    required: true
+runs:
+  using: composite
+  steps:
+    - id: install-dependencies
+      shell: bash
+      working-directory: ${{ inputs.service-directory }}
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        pip install -r requirements.txt
+
+    - id: run-test
+      shell: bash
+      working-directory: ${{ inputs.service-directory }}
+      run: |
+        python -m unittest discover -f -s ${{ inputs.service-name }}/tests -p "*_test.py"
+
+    - id: remove-dependencies
+      shell: bash
+      working-directory: ${{ inputs.service-directory }}
+      run: |
+        pip uninstall -r requirements.txt -y

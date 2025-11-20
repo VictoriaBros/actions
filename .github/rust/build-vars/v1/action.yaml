@@ -1,0 +1,100 @@
+name: build vars - ver. 2
+description: build deployment variables
+inputs:
+  org-name:
+    description: the organisation name
+    required: true
+  service-name:
+    description: the service name
+    required: true
+  ecr-registry:
+    description: Amazon ECR registry
+    required: true
+  service-directory:
+    description: the service directory
+    required: false
+    default: .
+outputs:
+  prod-image-name:
+    description: Amazon ECR build image name
+    value: ${{ steps.build-vars.outputs.prod-image-name }}
+  dev-image-name:
+    description: Generic build image name
+    value: ${{ steps.build-vars.outputs.dev-image-name }}
+  release-image-name:
+    description: Amazon ECR build image name
+    value: ${{ steps.build-vars.outputs.release-image-name }}
+  feature-image-name:
+    description: Generic build image name
+    value: ${{ steps.build-vars.outputs.feature-image-name }}
+  ecr-repository:
+    description: Amazon ECR repository
+    value: ${{ steps.build-vars.outputs.ecr-repository }}
+runs:
+  using: composite
+  steps:
+    - id: build-vars
+      shell: bash
+      env:
+        ECR_REGISTRY: ${{ inputs.ecr-registry }}
+        ORG_NAME: ${{ inputs.org-name }}
+        SERVICE_NAME: ${{ inputs.service-name }}
+        ALPHA_ID: ${{ github.run_number }}
+        REF: ${{ github.ref }}
+        GIT_SHA: ${{ github.sha }}
+      working-directory: ${{ inputs.service-directory }}
+      run: |
+        PACKAGE="VERSION"
+
+        # Extract the version directly from the PACKAGE variable
+        SOURCE_VERSION=$(cat $PACKAGE)
+
+        echo "Extracted version: $SOURCE_VERSION"
+
+        # Define the service version with the extracted version number
+        SERVICE_VERSION_NUMBER="v${SOURCE_VERSION:-1.0.0}"
+        echo "Service version number: $SERVICE_VERSION_NUMBER"
+
+        # Truncate the full commit SHA to the first 7 characters for the short SHA
+        GIT_SHORT_SHA=$(echo $GIT_SHA | cut -c1-7)
+
+        ECR_REPOSITORY=${ORG_NAME}/${SERVICE_NAME}
+        IMAGE_TAG=${SERVICE_VERSION_NUMBER}-alpha.${ALPHA_ID}
+        IMAGE_NAME=${ECR_REGISTRY}/${ECR_REPOSITORY}
+
+        DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}
+        PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
+
+        if [ "$REF" == "refs/heads/dev" ]; then
+          IMAGE_TAG=${SERVICE_VERSION_NUMBER}-${GIT_SHORT_SHA}
+          PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
+          DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}
+
+        elif [[ "$REF" == refs/pull/* ]]; then
+          IMAGE_TAG=${SERVICE_VERSION_NUMBER}-${GIT_SHORT_SHA}
+          PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
+          DEV_IMAGE=${IMAGE_NAME}:${GIT_SHORT_SHA}
+
+        elif [[ "$REF" == refs/heads/release/* ]]; then
+          IMAGE_TAG=${SERVICE_VERSION_NUMBER}-rel
+          RELEASE_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
+
+        elif [[ "$REF" == refs/heads/feature/* ]]; then
+          IMAGE_TAG=${SERVICE_VERSION_NUMBER}-feat
+          FEATURE_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
+
+        elif [ "$REF" == "refs/heads/main" ]; then
+          IMAGE_TAG=${SERVICE_VERSION_NUMBER}
+          PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
+
+        else
+          IMAGE_TAG=${SERVICE_VERSION_NUMBER}
+          PROD_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
+          echo "Branch not recognized. No image built."
+        fi
+
+        echo "prod-image-name=${PROD_IMAGE}" >> "$GITHUB_OUTPUT"
+        echo "dev-image-name=${DEV_IMAGE}" >> "$GITHUB_OUTPUT"
+        echo "release-image-name=${RELEASE_IMAGE}" >> "$GITHUB_OUTPUT"
+        echo "feature-image-name=${FEATURE_IMAGE}" >> "$GITHUB_OUTPUT"
+        echo "ecr-repository=${ECR_REPOSITORY}" >> "$GITHUB_OUTPUT"

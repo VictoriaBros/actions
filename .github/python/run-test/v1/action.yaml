@@ -20,7 +20,7 @@ runs:
     - id: run-test
       shell: bash
       run: |
-        python -m unittest discover -f -s ${{ inputs.service-name }}/tests -p "*_test.py"
+        python -m unittest discover -f -s ${{ inputs.service-directory }}/tests -p "*_test.py"
 
     - id: remove-dependencies
       shell: bash
